@@ -1,0 +1,7 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "dhbench.mixin",
+  "client": [ "MixinMinecraft", "MixinClientApi", "MixinLodRenderer", "MixinSharedConstants" ],
+  "injectors": { "defaultRequire": 1 }
+}

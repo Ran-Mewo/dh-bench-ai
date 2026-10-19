@@ -1,0 +1,49 @@
+// Runs the dev client with the benchmark harness in an isolated game directory, see bench.sh.
+// Lives outside the DH build so the harness never touches the codebase.
+
+def properties = gradle.startParameter.projectProperties
+
+gradle.projectsEvaluated {
+    // init scripts are also applied to buildSrc, which has no loader project
+    def loaderProject = gradle.rootProject.findProject(":" + (properties["dhbench.loader"] ?: "fabric"))
+    if (loaderProject == null || properties["dhbench.dir"] == null) return
+
+    def benchDir = new File(properties["dhbench.dir"])
+    def runClient = loaderProject.tasks.named("runClient", JavaExec).get()
+    def gameClasspath = runClient.classpath
+    def harnessOutput = new File(benchDir, "build")
+
+    def compileHarness = loaderProject.tasks.register("compileBenchmarkHarness", JavaCompile) {
+        source = loaderProject.fileTree(new File(benchDir, "harness/src"))
+        classpath = gameClasspath
+        destinationDirectory = harnessOutput
+        // DH's build adds its preprocessor to every java compile task, the harness doesn't use it
+        doFirst {
+            options.compilerArgs.removeAll { it.toString().contains("Manifold") }
+        }
+        // fabric finds the harness through the fabric.mod.json next to its classes
+        doLast {
+            loaderProject.copy {
+                from new File(benchDir, "harness/resources")
+                into harnessOutput
+            }
+        }
+    }
+
+    runClient.dependsOn(compileHarness)
+    runClient.classpath = gameClasspath + loaderProject.files(harnessOutput)
+    runClient.workingDir = new File(benchDir, "game")
+    runClient.jvmArgs("-Ddhbench.output=" + properties["dhbench.output"])
+    if (properties["dhbench.showAngles"] != null)
+    {
+        runClient.jvmArgs("-Ddhbench.showAngles=" + properties["dhbench.showAngles"])
+    }
+    if (properties["dhbench.jfr"] != null)
+    {
+        runClient.jvmArgs("-XX:StartFlightRecording=filename=" + properties["dhbench.jfr"] + ",settings=profile")
+    }
+    runClient.args(
+        "--quickPlaySingleplayer", "benchmark",
+        "--width", properties["dhbench.width"] ?: "1600",
+        "--height", properties["dhbench.height"] ?: "900")
+}

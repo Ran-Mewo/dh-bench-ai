@@ -1,0 +1,9 @@
+[common.worldGenerator]
+	# only measure the LODs already in the benchmark world
+	enableDistantGeneration = false
+
+[client.advanced.autoUpdater]
+	enableAutoUpdater = false
+
+[client.advanced.graphics.quality]
+	lodChunkRenderDistanceRadius = 256

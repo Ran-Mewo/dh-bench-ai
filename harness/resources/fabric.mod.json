@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "id": "dhbench",
+  "version": "1",
+  "name": "DH Benchmark Harness",
+  "environment": "client",
+  "entrypoints": { "client": [ "dhbench.Benchmark" ] },
+  "mixins": [ "dhbench.mixins.json" ],
+  "depends": { "distanthorizons": "*" }
+}

@@ -1,0 +1,17 @@
+version:5023
+graphicsPreset:"custom"
+enableVsync:false
+maxFps:260
+inactivityFpsLimit:"minimized"
+pauseOnLostFocus:false
+fullscreen:false
+renderDistance:12
+simulationDistance:5
+guiScale:2
+narrator:0
+soundCategory_master:0.0
+onboardAccessibility:false
+skipMultiplayerWarning:true
+joinedFirstServer:true
+tutorialStep:none
+musicToast:"never"
